@@ -9,7 +9,7 @@ use meta_signal_agent::{
     ProviderRetired, RejectionDetail, RequestUnimplemented, RetireProvider, SecretSource,
     SetDefaultProvider, Start, Stop, UnimplementedReason,
 };
-use nota_next::{NotaDecode, NotaEncode, NotaSource};
+use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, SessionEpoch, SubReply,
 };
