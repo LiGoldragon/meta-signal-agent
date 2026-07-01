@@ -9,6 +9,12 @@ It is a schema-derived `WireContract` crate: `schema/lib.schema` is the source
 of truth; `schema-rust-next`'s `ContractCrateBuild` emits the freshness-checked
 `src/schema/lib.rs`. No engine traits, runtime, actors, or `tokio`.
 
+## 0.5 · Direction
+
+`meta-signal-agent` is the security-sensitive door in the `agent` triad. It exists to make authority explicit: a security-sensitive provider-configuration or lifecycle edit is obvious from which repo it lands in, and callers that do not need owner authority do not compile against it at all.
+
+The load-bearing psyche decision is the provider model: a provider is a generic OpenAI-compatible API identified by endpoint, default model, and typed secret-source reference (Spirit `f8k7`). Adding a new provider is a `ConfigureProvider` message, never a new variant or contract change. The earlier spawn-agent/harness-policy framing is explicitly discarded (Spirit `iucr`).
+
 ## Scope — provider configuration + lifecycle, not harness policy
 
 Per psyche intent (Spirit `f8k7`, `iucr`), `agent` makes provider HTTP API
