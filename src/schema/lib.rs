@@ -103,6 +103,7 @@ pub enum SecretSource {
     Environment(EnvironmentSecret),
     Gopass(GopassSecret),
     File(FileSecret),
+    NoSecret,
 }
 
 #[rustfmt::skip]
