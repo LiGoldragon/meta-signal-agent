@@ -6,7 +6,7 @@
 policy contract). Mutating authority lives here, not in the ordinary contract.
 
 It is a schema-derived `WireContract` crate: `schema/lib.schema` is the source
-of truth; `schema-rust-next`'s `ContractCrateBuild` emits the freshness-checked
+of truth; `schema-rust`'s `ContractCrateBuild` emits the freshness-checked
 `src/schema/lib.rs`. No engine traits, runtime, actors, or `tokio`.
 
 ## 0.5 · Direction
@@ -76,8 +76,8 @@ new variant or contract change.
 ## Code map
 
 ```text
-schema/lib.schema        the source of truth (schema-rust-next grammar)
-src/schema/lib.rs        freshness-checked schema-rust-next artifact (generated)
+schema/lib.schema        the source of truth (schema-rust grammar)
+src/schema/lib.rs        freshness-checked schema-rust artifact (generated)
 src/lib.rs               module entry + hand-written methods on emitted nouns
 build.rs                 ContractCrateBuild -> WireContract emission
 examples/canonical.nota  one canonical NOTA example per operation/reply

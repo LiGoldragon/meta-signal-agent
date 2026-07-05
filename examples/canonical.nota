@@ -2,7 +2,7 @@
 ;; contract for the `agent` LLM-call component.
 ;;
 ;; One example per request and reply variant, in the exact schema-derived wire
-;; form (schema/lib.schema -> schema-rust-next -> generated Input / Output).
+;; form (schema/lib.schema -> schema-rust -> generated Input / Output).
 ;; String delimiters are only for strings that need them. Mutating authority
 ;; (provider configuration, lifecycle) lives here, never in the ordinary
 ;; signal-agent contract.
