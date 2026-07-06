@@ -24,9 +24,9 @@ fn exchange() -> ExchangeIdentifier {
 
 fn deepseek() -> ProviderConfiguration {
     ProviderConfiguration {
-        name: ProviderName::new("deepseek".to_owned()),
-        endpoint: EndpointUrl::new("https://api.deepseek.com/v1".to_owned()),
-        default_model: ModelName::new("deepseek-v4-flash".to_owned()),
+        provider_name: ProviderName::new("deepseek".to_owned()),
+        endpoint_url: EndpointUrl::new("https://api.deepseek.com/v1".to_owned()),
+        model_name: ModelName::new("deepseek-v4-flash".to_owned()),
         secret_source: SecretSource::Environment(EnvironmentSecret::new(EnvironmentVariable::new(
             "DEEPSEEK_API_KEY".to_owned(),
         ))),
@@ -107,12 +107,12 @@ fn every_reply_round_trips_through_frame() {
         Output::Started(Lifecycle::new(LifecycleState::Started)),
         Output::Stopped(Lifecycle::new(LifecycleState::Stopped)),
         Output::OrderRejected(OrderRejection {
-            reason: OrderRejectionReason::ProviderUnknown,
-            detail: RejectionDetail::new("no such provider".to_owned()),
+            order_rejection_reason: OrderRejectionReason::ProviderUnknown,
+            rejection_detail: RejectionDetail::new("no such provider".to_owned()),
         }),
         Output::RequestUnimplemented(RequestUnimplemented {
-            operation: OperationKind::SetDefaultProvider,
-            reason: UnimplementedReason::NotInPrototypeScope,
+            operation_kind: OperationKind::SetDefaultProvider,
+            unimplemented_reason: UnimplementedReason::NotInPrototypeScope,
         }),
     ];
     for reply in replies {
@@ -141,8 +141,8 @@ fn provider_configuration_round_trips_through_nota_text_with_secret_source_only(
 fn order_rejection_round_trips_through_nota_text() {
     round_trip_nota(
         Output::OrderRejected(OrderRejection {
-            reason: OrderRejectionReason::SecretUnavailable,
-            detail: RejectionDetail::new("secret source unavailable".to_owned()),
+            order_rejection_reason: OrderRejectionReason::SecretUnavailable,
+            rejection_detail: RejectionDetail::new("secret source unavailable".to_owned()),
         }),
         "(OrderRejected (SecretUnavailable [secret source unavailable]))",
     );

@@ -113,9 +113,9 @@ pub enum SecretSource {
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ProviderConfiguration {
-    pub name: ProviderName,
-    pub endpoint: EndpointUrl,
-    pub default_model: ModelName,
+    pub provider_name: ProviderName,
+    pub endpoint_url: EndpointUrl,
+    pub model_name: ModelName,
     pub secret_source: SecretSource,
 }
 
@@ -241,8 +241,8 @@ pub enum OrderRejectionReason {
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct OrderRejection {
-    pub reason: OrderRejectionReason,
-    pub detail: RejectionDetail,
+    pub order_rejection_reason: OrderRejectionReason,
+    pub rejection_detail: RejectionDetail,
 }
 
 #[rustfmt::skip]
@@ -294,8 +294,8 @@ pub enum UnimplementedReason {
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct RequestUnimplemented {
-    pub operation: OperationKind,
-    pub reason: UnimplementedReason,
+    pub operation_kind: OperationKind,
+    pub unimplemented_reason: UnimplementedReason,
 }
 
 #[rustfmt::skip]
