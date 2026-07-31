@@ -19,6 +19,16 @@ pub mod schema;
 
 pub use schema::lib::*;
 
+pub type ConfigureProvider = ConfigureProviderPayload;
+pub type RetireProvider = RetireProviderPayload;
+pub type SetDefaultProvider = SetDefaultProviderPayload;
+pub type Start = StartPayload;
+pub type Stop = StopPayload;
+pub type ProviderConfigured = ProviderConfiguredPayload;
+pub type ProviderRetired = ProviderRetiredPayload;
+pub type DefaultProviderSet = DefaultProviderSetPayload;
+pub type RequestUnimplemented = RequestUnimplementedPayload;
+
 impl Input {
     pub fn operation_kind(&self) -> OperationKind {
         match self {

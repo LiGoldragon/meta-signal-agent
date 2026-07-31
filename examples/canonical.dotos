@@ -1,4 +1,4 @@
-;; Canonical NOTA examples for meta-signal-agent — the owner-only meta policy
+;; Canonical DOTOS examples for meta-signal-agent — the owner-only meta policy
 ;; contract for the `agent` LLM-call component.
 ;;
 ;; One example per request and reply variant, in the exact schema-derived wire

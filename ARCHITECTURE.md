@@ -71,7 +71,7 @@ new variant or contract change.
 - Identifiers are full English words.
 - Contract code contains no Kameo, Tokio, redb, sockets, process spawning, or
   daemon policy logic.
-- Every operation and reply has an rkyv and NOTA round-trip witness.
+- Every operation and reply has an rkyv and DOTOS round-trip witness.
 
 ## Code map
 
@@ -80,8 +80,8 @@ schema/lib.schema        the source of truth (schema-rust grammar)
 src/schema/lib.rs        freshness-checked schema-rust artifact (generated)
 src/lib.rs               module entry + hand-written methods on emitted nouns
 build.rs                 ContractCrateBuild -> WireContract emission
-examples/canonical.nota  one canonical NOTA example per operation/reply
-tests/round_trip.rs      rkyv frame, NOTA, and operation-kind witnesses
+examples/canonical.dotos  one canonical DOTOS example per operation/reply
+tests/round_trip.rs      rkyv frame, DOTOS, and operation-kind witnesses
 ```
 
 ## See also

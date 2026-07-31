@@ -7,7 +7,7 @@ Read this before editing the meta agent contract.
 - `~/primary/skills/contract-repo.md`
 - `~/primary/skills/component-triad.md`
 - `~/primary/skills/naming.md`
-- `~/primary/skills/nota-design.md`
+- `~/primary/skills/dotos-design.md`
 - `~/primary/skills/rust-discipline.md`
 - this repo's `ARCHITECTURE.md`
 - `~/primary/reports/designer/309-design-agent-component-abstraction.md`

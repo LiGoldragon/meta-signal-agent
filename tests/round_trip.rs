@@ -1,7 +1,8 @@
 //! Architectural-truth round-trip tests for the schema-derived
 //! `meta-signal-agent` contract. Each request and reply variant round-trips
-//! through the `signal_frame` envelope (rkyv) and through NOTA text.
+//! through the `signal_frame` envelope (rkyv) and through DOTOS text.
 
+use dotos::{DotosDecode, DotosEncode, DotosSource};
 use meta_signal_agent::{
     ConfigureProvider, DefaultProviderSet, EndpointUrl, EnvironmentSecret, EnvironmentVariable,
     Frame, FrameBody, Input, Lifecycle, LifecycleState, ModelName, OperationKind, OrderRejection,
@@ -9,7 +10,6 @@ use meta_signal_agent::{
     ProviderRetired, RejectionDetail, RequestUnimplemented, RetireProvider, SecretSource,
     SetDefaultProvider, Start, Stop, UnimplementedReason,
 };
-use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, SessionEpoch, SubReply,
 };
@@ -48,10 +48,14 @@ fn round_trip_request(request: Input) -> Input {
 }
 
 fn round_trip_reply(reply: Output) -> Output {
-    let frame = Frame::new(FrameBody::Reply {
-        exchange: exchange(),
-        reply: Reply::committed(NonEmpty::single(SubReply::Ok(reply))),
-    });
+    let route = reply.wire_route();
+    let frame = Frame::new(
+        route,
+        FrameBody::Reply {
+            exchange: exchange(),
+            reply: Reply::committed(NonEmpty::single(SubReply::Ok(reply))),
+        },
+    );
     let bytes = frame.encode_length_prefixed().expect("encode");
     let decoded = Frame::decode_length_prefixed(&bytes).expect("decode");
     match decoded.into_body() {
@@ -66,15 +70,15 @@ fn round_trip_reply(reply: Output) -> Output {
     }
 }
 
-fn round_trip_nota<T>(value: T, expected: &str)
+fn round_trip_dotos<T>(value: T, expected: &str)
 where
-    T: NotaEncode + NotaDecode + PartialEq + std::fmt::Debug,
+    T: DotosEncode + DotosDecode + PartialEq + std::fmt::Debug,
 {
-    let encoded = value.to_nota();
+    let encoded = value.to_dotos();
     assert_eq!(encoded, expected);
-    let recovered = NotaSource::new(&encoded)
+    let recovered = DotosSource::new(&encoded)
         .parse::<T>()
-        .expect("decode nota text");
+        .expect("decode dotos text");
     assert_eq!(recovered, value);
 }
 
@@ -130,20 +134,20 @@ fn input_exposes_contract_owned_operation_kind() {
 }
 
 #[test]
-fn provider_configuration_round_trips_through_nota_text_with_secret_source_only() {
-    round_trip_nota(
+fn provider_configuration_round_trips_through_dotos_text_with_secret_source_only() {
+    round_trip_dotos(
         Input::ConfigureProvider(ConfigureProvider::new(deepseek())),
-        "(ConfigureProvider (deepseek https://api.deepseek.com/v1 deepseek-v4-flash (Environment DEEPSEEK_API_KEY)))",
+        "ConfigureProvider.{deepseek https://api.deepseek.com/v1 deepseek-v4-flash Environment.DEEPSEEK_API_KEY}",
     );
 }
 
 #[test]
-fn order_rejection_round_trips_through_nota_text() {
-    round_trip_nota(
+fn order_rejection_round_trips_through_dotos_text() {
+    round_trip_dotos(
         Output::OrderRejected(OrderRejection {
             order_rejection_reason: OrderRejectionReason::SecretUnavailable,
             rejection_detail: RejectionDetail::new("secret source unavailable".to_owned()),
         }),
-        "(OrderRejected (SecretUnavailable [secret source unavailable]))",
+        "OrderRejected.{SecretUnavailable (secret source unavailable)}",
     );
 }
