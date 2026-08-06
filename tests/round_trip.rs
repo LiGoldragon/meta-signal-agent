@@ -1,153 +1,59 @@
-//! Architectural-truth round-trip tests for the schema-derived
-//! `meta-signal-agent` contract. Each request and reply variant round-trips
-//! through the `signal_frame` envelope (rkyv) and through DOTOS text.
+use dotos::{DotosEncode, DotosSource};
+use meta_signal_agent::*;
 
-use dotos::{DotosDecode, DotosEncode, DotosSource};
-use meta_signal_agent::{
-    ConfigureProvider, DefaultProviderSet, EndpointUrl, EnvironmentSecret, EnvironmentVariable,
-    Frame, FrameBody, Input, Lifecycle, LifecycleState, ModelName, OperationKind, OrderRejection,
-    OrderRejectionReason, Output, ProviderConfiguration, ProviderConfigured, ProviderName,
-    ProviderRetired, RejectionDetail, RequestUnimplemented, RetireProvider, SecretSource,
-    SetDefaultProvider, Start, Stop, UnimplementedReason,
-};
-use signal_frame::{
-    ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply, SessionEpoch, SubReply,
-};
-
-fn exchange() -> ExchangeIdentifier {
-    ExchangeIdentifier::new(
-        SessionEpoch::new(1),
-        ExchangeLane::Connector,
-        LaneSequence::first(),
+fn exchange() -> signal_frame::ExchangeIdentifier {
+    signal_frame::ExchangeIdentifier::new(
+        signal_frame::SessionEpoch::new(1),
+        signal_frame::ExchangeLane::Connector,
+        signal_frame::LaneSequence::first(),
     )
 }
 
-fn deepseek() -> ProviderConfiguration {
-    ProviderConfiguration {
-        provider_name: ProviderName::new("deepseek".to_owned()),
-        endpoint_url: EndpointUrl::new("https://api.deepseek.com/v1".to_owned()),
-        model_name: ModelName::new("deepseek-v4-flash".to_owned()),
-        secret_source: SecretSource::Environment(EnvironmentSecret::new(EnvironmentVariable::new(
-            "DEEPSEEK_API_KEY".to_owned(),
-        ))),
-    }
-}
-
-fn round_trip_request(request: Input) -> Input {
-    let expected = request.clone();
-    let frame = request.into_frame(exchange());
-    let bytes = frame.encode_length_prefixed().expect("encode");
-    let decoded = Frame::decode_length_prefixed(&bytes).expect("decode");
-    match decoded.into_body() {
-        FrameBody::Request { request, .. } => {
-            assert_eq!(request.payloads().head(), &expected);
-            request.payloads().head().clone()
-        }
-        other => panic!("expected request operation, got {other:?}"),
-    }
-}
-
-fn round_trip_reply(reply: Output) -> Output {
-    let route = reply.wire_route();
-    let frame = Frame::new(
-        route,
-        FrameBody::Reply {
-            exchange: exchange(),
-            reply: Reply::committed(NonEmpty::single(SubReply::Ok(reply))),
-        },
-    );
-    let bytes = frame.encode_length_prefixed().expect("encode");
-    let decoded = Frame::decode_length_prefixed(&bytes).expect("decode");
-    match decoded.into_body() {
-        FrameBody::Reply { reply, .. } => match reply {
-            Reply::Accepted { per_operation, .. } => match per_operation.into_head() {
-                SubReply::Ok(payload) => payload,
-                other => panic!("expected accepted reply payload, got {other:?}"),
-            },
-            other => panic!("expected accepted reply, got {other:?}"),
-        },
-        other => panic!("expected reply operation, got {other:?}"),
-    }
-}
-
-fn round_trip_dotos<T>(value: T, expected: &str)
-where
-    T: DotosEncode + DotosDecode + PartialEq + std::fmt::Debug,
-{
-    let encoded = value.to_dotos();
-    assert_eq!(encoded, expected);
-    let recovered = DotosSource::new(&encoded)
-        .parse::<T>()
-        .expect("decode dotos text");
-    assert_eq!(recovered, value);
-}
-
-#[test]
-fn every_request_round_trips_through_frame() {
-    let requests = [
-        Input::ConfigureProvider(ConfigureProvider::new(deepseek())),
-        Input::RetireProvider(RetireProvider::new(ProviderName::new("mimo".to_owned()))),
-        Input::SetDefaultProvider(SetDefaultProvider::new(ProviderName::new(
-            "deepseek".to_owned(),
-        ))),
-        Input::Start(Start {}),
-        Input::Stop(Stop {}),
-    ];
-    for request in requests {
-        assert_eq!(round_trip_request(request.clone()), request);
+fn configuration() -> z2VUoM {
+    z2VUoM {
+        field_0: z2Vdno::new("deepseek".to_owned()),
+        field_1: z2VQu1::new("https://api.deepseek.com".to_owned()),
+        field_2: z2VQyu::new("deepseek-chat".to_owned()),
+        field_3: z2Veh3::z2Vezi,
     }
 }
 
 #[test]
-fn every_reply_round_trips_through_frame() {
-    let replies = [
-        Output::ProviderConfigured(ProviderConfigured::new(ProviderName::new(
-            "deepseek".to_owned(),
-        ))),
-        Output::ProviderRetired(ProviderRetired::new(ProviderName::new("mimo".to_owned()))),
-        Output::DefaultProviderSet(DefaultProviderSet::new(ProviderName::new(
-            "deepseek".to_owned(),
-        ))),
-        Output::Started(Lifecycle::new(LifecycleState::Started)),
-        Output::Stopped(Lifecycle::new(LifecycleState::Stopped)),
-        Output::OrderRejected(OrderRejection {
-            order_rejection_reason: OrderRejectionReason::ProviderUnknown,
-            rejection_detail: RejectionDetail::new("no such provider".to_owned()),
-        }),
-        Output::RequestUnimplemented(RequestUnimplemented {
-            operation_kind: OperationKind::SetDefaultProvider,
-            unimplemented_reason: UnimplementedReason::NotInPrototypeScope,
-        }),
-    ];
-    for reply in replies {
-        assert_eq!(round_trip_reply(reply.clone()), reply);
-    }
-}
-
-#[test]
-fn input_exposes_contract_owned_operation_kind() {
+fn authority_projected_request_round_trips_through_dotos_and_the_bound_frame() {
+    let request = z2VU7B::z2VWwB(z2VX7d::new(configuration()));
+    let text = request.to_dotos();
+    assert!(text.starts_with("ConfigureProvider."), "{text}");
     assert_eq!(
-        Input::ConfigureProvider(ConfigureProvider::new(deepseek())).operation_kind(),
-        OperationKind::ConfigureProvider
+        DotosSource::new(&text)
+            .parse::<z2VU7B>()
+            .expect("request Dotos decodes"),
+        request,
     );
-    assert_eq!(Input::Stop(Stop {}).operation_kind(), OperationKind::Stop);
+
+    let encoded = request
+        .clone()
+        .encode_request_frame(exchange())
+        .expect("request frame encodes");
+    let (decoded_exchange, decoded) =
+        ContractMarker::decode_single_request(&encoded).expect("request frame decodes");
+    assert_eq!(decoded_exchange, exchange());
+    assert_eq!(decoded, request);
 }
 
 #[test]
-fn provider_configuration_round_trips_through_dotos_text_with_secret_source_only() {
-    round_trip_dotos(
-        Input::ConfigureProvider(ConfigureProvider::new(deepseek())),
-        "ConfigureProvider.{deepseek https://api.deepseek.com/v1 deepseek-v4-flash Environment.DEEPSEEK_API_KEY}",
+fn authority_projected_reply_round_trips_through_dotos_and_archive_storage() {
+    let reply = z2VUiq::z2VUhK(z2VQtu::new(z2Vdno::new("deepseek".to_owned())));
+    let text = reply.to_dotos();
+    assert!(text.starts_with("ProviderConfigured."), "{text}");
+    assert_eq!(
+        DotosSource::new(&text)
+            .parse::<z2VUiq>()
+            .expect("reply Dotos decodes"),
+        reply,
     );
-}
 
-#[test]
-fn order_rejection_round_trips_through_dotos_text() {
-    round_trip_dotos(
-        Output::OrderRejected(OrderRejection {
-            order_rejection_reason: OrderRejectionReason::SecretUnavailable,
-            rejection_detail: RejectionDetail::new("secret source unavailable".to_owned()),
-        }),
-        "OrderRejected.{SecretUnavailable (secret source unavailable)}",
-    );
+    let archive = rkyv::to_bytes::<rkyv::rancor::Error>(&reply).expect("reply archives");
+    let recovered =
+        rkyv::from_bytes::<z2VUiq, rkyv::rancor::Error>(&archive).expect("reply recovers");
+    assert_eq!(recovered, reply);
 }

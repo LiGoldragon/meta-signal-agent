@@ -5,9 +5,11 @@
 (`agent` runtime, `signal-agent` ordinary contract, `meta-signal-agent` meta
 policy contract). Mutating authority lives here, not in the ordinary contract.
 
-It is a schema-derived `WireContract` crate: `schema/lib.schema` is the source
-of truth; `schema-rust`'s `ContractCrateBuild` emits the freshness-checked
-`src/schema/lib.rs`. No engine traits, runtime, actors, or `tokio`.
+It is an authority-verified Ethos Interface crate. Core Nomos revalidates the
+sealed transaction, Whole Logos carries the structural meaning, and Rust Logos
+alone projects its encoded Rust coordinates. The visible names belong to Ethos
+and Dotos; Rust publishes no parallel readable wire vocabulary. No engine
+traits, runtime, actors, or `tokio` live here.
 
 ## 0.5 · Direction
 
@@ -76,12 +78,14 @@ new variant or contract change.
 ## Code map
 
 ```text
-schema/lib.schema        the source of truth (schema-rust grammar)
-src/schema/lib.rs        freshness-checked schema-rust artifact (generated)
-src/lib.rs               module entry + hand-written methods on emitted nouns
-build.rs                 ContractCrateBuild -> WireContract emission
+ethos/interface.ethos    canonical authority-verified Interface
+src/bootstrap_manifest.rs producer-owned opaque authority seats
+src/schema/lib/generated.rs Rust Logos' checked encoded projection
+src/schema/lib/behavior.rs archive, Dotos, and bound-frame behavior
+src/lib.rs               source witnesses + encoded projection export
+build.rs                 authority assembly, Nomos lowering, Rust projection
 examples/canonical.dotos  one canonical DOTOS example per operation/reply
-tests/round_trip.rs      rkyv frame, DOTOS, and operation-kind witnesses
+tests/round_trip.rs       rkyv frame and Dotos witnesses
 ```
 
 ## See also

@@ -12,5 +12,5 @@ MiniMax, or a local subscription-backed server is a `ConfigureProvider` message,
 never a contract change. The secret source is a daemon-resolved backend
 reference; the secret value never crosses the wire. `NoSecret` is the explicit
 local-provider shape when the loopback server is started without its optional
-local API-key gate. `schema/lib.schema` is the source of truth; read
-`ARCHITECTURE.md` and `INTENT.md`.
+local API-key gate. `ethos/interface.ethos` is the authority-verified source;
+read `ARCHITECTURE.md` for the boundary and invariants.

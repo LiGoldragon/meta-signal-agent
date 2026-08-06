@@ -1,0 +1,8 @@
+Interface.{1 0 0}
+[]
+{
+  []
+  []
+  []
+  [StopPayload.{} SecretFilePath.String ProviderName.String DefaultProviderSetPayload.ProviderName ProviderConfiguration.{ProviderName EndpointUrl ModelName SecretSource} StartPayload.{} OrderRejection.{OrderRejectionReason RejectionDetail} LifecycleState.[Started Stopped] RetireProviderPayload.ProviderName RejectionDetail.String EnvironmentSecret.EnvironmentVariable OrderRejectionReason.[PolicyStoreUnavailable EndpointInvalid SecretUnavailable ProviderUnknown ProviderAlreadyConfigured] SecretSource.[Environment.EnvironmentSecret NoSecret Gopass.GopassSecret File.FileSecret] OperationKind.[RetireProvider SetDefaultProvider Stop Start ConfigureProvider] ProviderRetiredPayload.ProviderName AgentMetaRequest.[RetireProvider.RetireProviderPayload Stop.StopPayload SetDefaultProvider.SetDefaultProviderPayload Start.StartPayload ConfigureProvider.ConfigureProviderPayload] ModelName.String ProviderConfiguredPayload.ProviderName UnimplementedReason.[NotInPrototypeScope] ConfigureProviderPayload.ProviderConfiguration GopassPath.String EnvironmentVariable.String EndpointUrl.String SetDefaultProviderPayload.ProviderName GopassSecret.GopassPath FileSecret.SecretFilePath Lifecycle.LifecycleState RequestUnimplementedPayload.{OperationKind UnimplementedReason} AgentMetaReply.[DefaultProviderSet.DefaultProviderSetPayload Started.Lifecycle Stopped.Lifecycle ProviderRetired.ProviderRetiredPayload ProviderConfigured.ProviderConfiguredPayload RequestUnimplemented.RequestUnimplementedPayload OrderRejected.OrderRejection]]
+}

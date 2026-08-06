@@ -1,42 +1,12 @@
-//! Schema-derived meta policy Signal contract for the `agent` LLM-call component.
+//! Authority-verified Agent meta-policy Interface.
 //!
-//! This is the owner-only authority surface. The deploy/bootstrap tool (and the
-//! gated-Spirit owner) configures providers and drives lifecycle here; ordinary
-//! peer-callable call traffic belongs in `signal-agent`.
-//!
-//! Provider model (psyche f8k7): a provider is a GENERIC OpenAI-compatible API —
-//! `ProviderConfiguration` carries an endpoint URL, a default model, and an
-//! API-key `SecretSource` reference (Environment, Gopass, File, or NoSecret) the
-//! daemon resolves; the secret value never crosses this wire. Adding DeepSeek,
-//! MiMo, Kimi, GLM, MiniMax, or a local subscription-backed server is a
-//! `ConfigureProvider` message, never a contract change.
-//!
-//! `schema/lib.schema` is the source of truth. The checked-in `src/schema/lib.rs`
-//! is a freshness-checked schema-rust artifact, not handwritten vocabulary.
+//! Ethos owns the visible contract vocabulary. Rust exposes only encoded
+//! coordinates projected through the sealed Rust Logos boundary.
 
-#[rustfmt::skip]
+pub mod bootstrap_manifest;
 pub mod schema;
 
+pub const META_SIGNAL_AGENT_INTERFACE_SOURCE: &str = include_str!("../ethos/interface.ethos");
+pub const META_SIGNAL_AGENT_INTERFACE_RUST: &str = include_str!("schema/lib/generated.rs");
+
 pub use schema::lib::*;
-
-pub type ConfigureProvider = ConfigureProviderPayload;
-pub type RetireProvider = RetireProviderPayload;
-pub type SetDefaultProvider = SetDefaultProviderPayload;
-pub type Start = StartPayload;
-pub type Stop = StopPayload;
-pub type ProviderConfigured = ProviderConfiguredPayload;
-pub type ProviderRetired = ProviderRetiredPayload;
-pub type DefaultProviderSet = DefaultProviderSetPayload;
-pub type RequestUnimplemented = RequestUnimplementedPayload;
-
-impl Input {
-    pub fn operation_kind(&self) -> OperationKind {
-        match self {
-            Self::ConfigureProvider(_) => OperationKind::ConfigureProvider,
-            Self::RetireProvider(_) => OperationKind::RetireProvider,
-            Self::SetDefaultProvider(_) => OperationKind::SetDefaultProvider,
-            Self::Start(_) => OperationKind::Start,
-            Self::Stop(_) => OperationKind::Stop,
-        }
-    }
-}

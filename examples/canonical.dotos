@@ -1,8 +1,8 @@
 ;; Canonical DOTOS examples for meta-signal-agent — the owner-only meta policy
 ;; contract for the `agent` LLM-call component.
 ;;
-;; One example per request and reply variant, in the exact schema-derived wire
-;; form (schema/lib.schema -> schema-rust -> generated Input / Output).
+;; One example per request and reply variant, in the exact Dotos projection of
+;; the authority-verified Ethos Interface.
 ;; String delimiters are only for strings that need them. Mutating authority
 ;; (provider configuration, lifecycle) lives here, never in the ordinary
 ;; signal-agent contract.
